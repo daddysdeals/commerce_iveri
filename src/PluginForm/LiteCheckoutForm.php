@@ -25,7 +25,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'capture' => $form['#capture'],
     ];
     
-    print_r($extra);
+    print_r($payment_gateway_plugin->getRedirectUrl());
 
     $order = $payment->getOrder();
     $order->setData('iveri_lite_checkout', [
@@ -37,7 +37,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     $order->save();
 
     $data = [
-      'token' => $paypal_response['TOKEN'],
+      'token' => '',
       'return' => $form['#return_url'],
       'cancel' => $form['#cancel_url'],
       'total' => $payment->getAmount()->getNumber(),
