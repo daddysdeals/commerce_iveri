@@ -42,7 +42,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInterface {
 
-  const IVERI_LITE_SUBMISSION_ENDPOINT = 'https://backoffice.iveri.co.za/Lite/Transactions/New/Authorise.aspx';
+  const IVERI_LITE_SUBMISSION_ENDPOINT = 'https://backoffice.nedsecure.co.za/Lite/Transactions/New/EasyAuthorise.aspx';
   const IVERI_LITE_AUTH_INFO_ENDPOINT = 'https://backoffice.iveri.co.za/Lite/Transactions/New/AuthoriseInfo.aspx';
   const IVERI_CURRENCY_CODE = 'ZAR';
 
