@@ -77,17 +77,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Ecom_BillTo_Telecom_Phone_Number' => '',
       'Ecom_BillTo_Online_Email' => '',
       
-      'Ecom_Payment_Card_Name' => '',
-      'Ecom_Payment_Card_Type' => '',
-      'Ecom_Payment_Card_Number' => '',
-      'Ecom_Payment_Card_Verification' => '',
-      'Ecom_Payment_Card_Protocols' => '',
-      'Ecom_Payment_Card_StartDate_Day' => '',
-      'Ecom_Payment_Card_StartDate_Month' => '',
-      'Ecom_Payment_Card_StartDate_Year' => '',
-      'Ecom_Payment_Card_ExpDate_Day' => '',
-      'Ecom_Payment_Card_ExpDate_Month' => '',
-      'Ecom_Payment_Card_ExpDate_Year' => '',
+      'Ecom_Payment_Card_Protocols' => 'iVeri',
 
       'Ecom_ConsumerOrderID' => $order->id(),
       'LITE_CONSUMERORDERID_PREFIX' => 'DC',
