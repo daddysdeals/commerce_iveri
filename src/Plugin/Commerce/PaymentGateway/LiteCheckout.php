@@ -137,8 +137,8 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
     $settings = (array) $settings + array(
       'test_key' => '',
       'live_key' => '',
-      'submission_endpoint' => empty($settings['submission_endpoint']) ? IVERI_LITE_SUBMISSION_ENDPOINT : $settings['submission_endpoint'],
-      'auth_info_endpoint' => empty($settings['auth_info_endpoint']) ? IVERI_LITE_AUTH_INFO_ENDPOINT : $settings['auth_info_endpoint'],
+      'submission_endpoint' => empty($settings['submission_endpoint']) ? self::IVERI_LITE_SUBMISSION_ENDPOINT : $settings['submission_endpoint'],
+      'auth_info_endpoint' => empty($settings['auth_info_endpoint']) ? self::IVERI_LITE_AUTH_INFO_ENDPOINT : $settings['auth_info_endpoint'],
       'redirect_validation_hash' => empty($settings['redirect_validation_hash']) ? $this->_commerce_iveri_lite_randomstring(16) : $settings['redirect_validation_hash'],
       'transaction_mode' => 'test',
     );

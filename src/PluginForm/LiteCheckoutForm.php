@@ -30,8 +30,8 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     $order = $payment->getOrder();
     $order->setData('iveri_lite_checkout', [
       'flow' => 'iveri_lite',
-      'token' => $paypal_response['TOKEN'],
-      'payerid' => FALSE,
+      'token' => '',
+      'payerid' => false,
       'capture' => $extra['capture'],
     ]);
     $order->save();
