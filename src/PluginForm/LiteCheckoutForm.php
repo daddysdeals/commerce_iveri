@@ -40,13 +40,13 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Lite_AutoInvoice_Ext' => 'AUT',
       'Lite_On_Error_Resume_Next' => true,
 
-      'DC_PAYMENT_ID' => '',
-      'DC_TRANSACTION_ID' => '',
+      //'DC_PAYMENT_ID' => '',
+      //'DC_TRANSACTION_ID' => '',
 
       'Lite_Order_DiscountAmount' => 0,
       'Lite_Website_Successful_url' => $extra['return_url'],
       'Lite_Website_Fail_url' => $extra['cancel_url'],
-      'Lite_Website_TryLater_url' => 'http://dd-prodshop.devspot.productions/checkout/1/payment/tryagain',
+      'Lite_Website_TryLater_url' => $extra['cancel_url'],
       'Lite_Website_Error_url' => $extra['cancel_url'],
       'Ecom_ShipTo_Postal_Name_Prefix' => '',
       'Ecom_ShipTo_Postal_Name_First' => '',
@@ -96,7 +96,9 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Lite_Payment_Card_PreAuthMode' => false,
     ];
 
-    //die;
+
+    print_r($data);
+    die;
 
     return $this->buildRedirectForm($form, $form_state, $payment_gateway_plugin->getRedirectUrl(), $data, 'post');
   }
