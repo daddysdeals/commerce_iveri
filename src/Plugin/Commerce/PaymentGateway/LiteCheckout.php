@@ -125,7 +125,14 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return parent::defaultConfiguration();
+    return [
+      'test_key' => '',
+      'live_key' => '',
+      'submission_endpoint' => self::IVERI_LITE_SUBMISSION_ENDPOINT,
+      'auth_info_endpoint' => self::IVERI_LITE_AUTH_INFO_ENDPOINT,
+      'redirect_validation_hash' => $this->_commerce_iveri_lite_randomstring(16),
+      'transaction_mode' => 'test',
+    ] + parent::defaultConfiguration();
   }
 
   /**
@@ -134,47 +141,38 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 
-    $settings = (array) $settings + array(
-      'test_key' => '',
-      'live_key' => '',
-      'submission_endpoint' => empty($settings['submission_endpoint']) ? self::IVERI_LITE_SUBMISSION_ENDPOINT : $settings['submission_endpoint'],
-      'auth_info_endpoint' => empty($settings['auth_info_endpoint']) ? self::IVERI_LITE_AUTH_INFO_ENDPOINT : $settings['auth_info_endpoint'],
-      'redirect_validation_hash' => empty($settings['redirect_validation_hash']) ? $this->_commerce_iveri_lite_randomstring(16) : $settings['redirect_validation_hash'],
-      'transaction_mode' => 'test',
-    );
-
     $form['test_key'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('API Test Key'),
       '#description' => $this->t('Your test application key.'),
-      '#default_value' => $settings['test_key'],
+      '#default_value' => $this->configuration['test_key'],
     );
 
     $form['live_key'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('API Live Key'),
       '#description' => $this->t('Your live application key.'),
-      '#default_value' => $settings['live_key'],
+      '#default_value' => $this->configuration['live_key'],
     );
 
     $form['submission_endpoint'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('API Submission Endpoint'),
       '#description' => $this->t('Submission Endpoint (You\'ll probably not want to mess with this)'),
-      '#default_value' => $settings['submission_endpoint'],
+      '#default_value' => $this->configuration['submission_endpoint'],
     );
 
     $form['auth_info_endpoint'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('API Authorization Endpoint'),
       '#description' => $this->t('Authorization Endpoint (You\'ll probably not want to mess with this either)'),
-      '#default_value' => $settings['auth_info_endpoint'],
+      '#default_value' => $this->configuration['auth_info_endpoint'],
     );
 
     $form['redirect_validation_hash'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Redirect validation key'),
-      '#default_value' => $settings['redirect_validation_hash'],
+      '#default_value' => $this->configuration['redirect_validation_hash'],
       '#description' => $this->t('An MD5 hash key for validating redirect responses.  A random key has been generated for your convenience.  Do not leave this blank!'),
     );
 
@@ -187,7 +185,7 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
         'live' => $this->t('Live - Production Mode'),
       ),
       '#multiple' => FALSE,
-      '#default_value' => $settings['transaction_mode'],
+      '#default_value' => $this->configuration['transaction_mode'],
     );
     
     return $form;
@@ -462,6 +460,18 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
       $payment->setRemoteState($ipn_data['payment_status']);
       // Save the transaction information.
       $payment->save();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRedirectUrl() {
+    if ($this->getMode() == 'test') {
+      return 'https://www.sandbox.paypal.com/checkoutnow';
+    }
+    else {
+      return 'https://www.paypal.com/checkoutnow';
     }
   }
 
