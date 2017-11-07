@@ -46,7 +46,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Lite_Order_DiscountAmount' => 0,
       'Lite_Website_Successful_url' => $extra['return_url'],
       'Lite_Website_Fail_url' => $extra['cancel_url'],
-      'Lite_Website_TryLater_url' => $extra['cancel_url'],
+      'Lite_Website_TryLater_url' => 'http://dd-prodshop.devspot.productions/checkout/1/payment/tryagain',
       'Lite_Website_Error_url' => $extra['cancel_url'],
       'Ecom_ShipTo_Postal_Name_Prefix' => '',
       'Ecom_ShipTo_Postal_Name_First' => '',
