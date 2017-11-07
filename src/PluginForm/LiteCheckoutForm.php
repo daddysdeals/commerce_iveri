@@ -25,9 +25,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'capture' => $form['#capture'],
     ];
     
-    print_r($payment_gateway_plugin->getRedirectUrl());
-
-    die;
+    //die;
 
     $order = $payment->getOrder();
     $order->setData('iveri_lite_checkout', [
