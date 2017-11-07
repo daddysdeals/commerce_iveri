@@ -27,8 +27,6 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'capture' => $form['#capture'],
     ];
     
-    //die;
-
     $order = $payment->getOrder();
     $order->setData('iveri_lite_checkout', [
       'flow' => 'iveri_lite',
@@ -98,10 +96,10 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Ecom_Payment_Card_ExpDate_Year' => '',
 
       'Ecom_ConsumerOrderID' => $order->order_id,
-      
+
     ];
 
-    print_r($data);
+    var_dump($data);
 
     die;
 
