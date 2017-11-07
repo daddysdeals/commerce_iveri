@@ -19,9 +19,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     /** @var \Drupal\commerce_iveri\Plugin\Commerce\PaymentGateway\LiteCheckoutInterface $payment_gateway_plugin */
     $payment_gateway_plugin = $payment->getPaymentGateway()->getPlugin();
 
-    print_r($payment_gateway_plugin->getConfiguration());
-
-    die;
+    $conf = $payment_gateway_plugin->getConfiguration();
 
     $extra = [
       'return_url' => $form['#return_url'],
@@ -41,7 +39,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     $order->save();
 
     $data = [
-      'Lite_Merchant_ApplicationID' => '',
+      'Lite_Merchant_ApplicationID' => ($conf['transaction_mode'] == 'live') ? $conf['live_key'] : $conf['test_key'],
       'Lite_Order_Amount' => $payment->getAmount()->getNumber(),
       'Lite_Order_Terminal' => '',
       'Lite_Order_AuthorisationCode' => '',
@@ -53,6 +51,10 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'DC_PAYMENT_ID' => '',
       'DC_TRANSACTION_ID' => '',
     ];
+
+    print_r($data);
+
+    die;
 
     return $this->buildRedirectForm($form, $form_state, $payment_gateway_plugin->getRedirectUrl(), $data, 'get');
   }
