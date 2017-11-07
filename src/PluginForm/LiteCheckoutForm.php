@@ -19,7 +19,8 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     /** @var \Drupal\commerce_iveri\Plugin\Commerce\PaymentGateway\LiteCheckoutInterface $payment_gateway_plugin */
     $payment_gateway_plugin = $payment->getPaymentGateway()->getPlugin();
 
-    var_dump($payment_gateway_plugin);
+    print_r($payment_gateway_plugin->getConfiguration());
+
     die;
 
     $extra = [
