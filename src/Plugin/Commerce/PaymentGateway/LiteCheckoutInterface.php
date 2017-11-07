@@ -12,14 +12,6 @@ use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\SupportsRefundsInterf
  */
 interface LiteCheckoutInterface extends SupportsAuthorizationsInterface, SupportsRefundsInterface {
   /**
-   * Gets the API URL.
-   *
-   * @return string
-   *   The API URL.
-   */
-  public function getApiUrl();
-
-  /**
    * Gets the redirect URL.
    *
    * @return string
