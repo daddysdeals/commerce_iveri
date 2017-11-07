@@ -87,8 +87,8 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     ];
 
 
-    print_r($data);
-    die;
+    //print_r($data);
+    //die;
 
     return $this->buildRedirectForm($form, $form_state, $payment_gateway_plugin->getRedirectUrl(), $data, 'post');
   }
