@@ -28,11 +28,11 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * Provides the Paypal Express Checkout payment gateway.
  *
  * @CommercePaymentGateway(
- *   id = "paypal_express_checkout",
- *   label = @Translation("PayPal (Express Checkout)"),
- *   display_label = @Translation("PayPal"),
+ *   id = "iveri_lite_checkout",
+ *   label = @Translation("iVeri (Lite Checkout)"),
+ *   display_label = @Translation("iVeri Lite"),
  *    forms = {
- *     "offsite-payment" = "Drupal\commerce_paypal\PluginForm\ExpressCheckoutForm",
+ *     "offsite-payment" = "Drupal\commerce_iveri\PluginForm\LiteCheckoutForm",
  *   },
  *   payment_method_types = {"credit_card"},
  *   credit_card_types = {
