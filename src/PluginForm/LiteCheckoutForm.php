@@ -95,7 +95,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Ecom_Payment_Card_ExpDate_Month' => '',
       'Ecom_Payment_Card_ExpDate_Year' => '',
 
-      'Ecom_ConsumerOrderID' => $order->id(),
+      'Ecom_ConsumerOrderID' => $order->getId(),
 
     ];
 
