@@ -19,6 +19,8 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     /** @var \Drupal\commerce_iveri\Plugin\Commerce\PaymentGateway\LiteCheckoutInterface $payment_gateway_plugin */
     $payment_gateway_plugin = $payment->getPaymentGateway()->getPlugin();
 
+    print_r($payment_gateway_plugin->getInstanceId());
+
     $conf = $payment_gateway_plugin->getConfiguration();
 
     $extra = [
@@ -38,7 +40,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Lite_Order_BudgetPeriod' => '',
       'Lite_Website_TextColor' => '#000000',
       'Lite_Website_BGColor' => '#ffffff',
-      'Lite_AutoInvoice_Ext' => '',
+      'Lite_AutoInvoice_Ext' => 'AUT',
       'Lite_On_Error_Resume_Next' => true,
       'DC_PAYMENT_ID' => '',
       'DC_TRANSACTION_ID' => '',
@@ -90,7 +92,10 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Ecom_Payment_Card_ExpDate_Year' => '',
 
       'Ecom_ConsumerOrderID' => $order->id(),
-
+      'LITE_CONSUMERORDERID_PREFIX' => 'DC',
+      'Ecom_SchemaVersion' => '',
+      'Ecom_TransactionComplete' => false,
+      'Lite_Payment_Card_PreAuthMode' => false,
     ];
 
     var_dump($data);
