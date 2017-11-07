@@ -27,6 +27,8 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     
     print_r($payment_gateway_plugin->getRedirectUrl());
 
+    die;
+
     $order = $payment->getOrder();
     $order->setData('iveri_lite_checkout', [
       'flow' => 'iveri_lite',
