@@ -16,8 +16,11 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
 
     /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
     $payment = $this->entity;
-    /** @var \Drupal\commerce_paypal\Plugin\Commerce\PaymentGateway\ExpressCheckoutInterface $payment_gateway_plugin */
+    /** @var \Drupal\commerce_iveri\Plugin\Commerce\PaymentGateway\LiteCheckoutInterface $payment_gateway_plugin */
     $payment_gateway_plugin = $payment->getPaymentGateway()->getPlugin();
+
+    var_dump($payment_gateway_plugin);
+    die;
 
     $extra = [
       'return_url' => $form['#return_url'],
@@ -37,10 +40,17 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     $order->save();
 
     $data = [
-      'token' => '',
-      'return' => $form['#return_url'],
-      'cancel' => $form['#cancel_url'],
-      'total' => $payment->getAmount()->getNumber(),
+      'Lite_Merchant_ApplicationID' => '',
+      'Lite_Order_Amount' => $payment->getAmount()->getNumber(),
+      'Lite_Order_Terminal' => '',
+      'Lite_Order_AuthorisationCode' => '',
+      'Lite_Order_BudgetPeriod' => '',
+      'Lite_Website_TextColor' => '#000000',
+      'Lite_Website_BGColor' => '#ffffff',
+      'Lite_AutoInvoice_Ext' => '',
+      'Lite_On_Error_Resume_Next' => true,
+      'DC_PAYMENT_ID' => '',
+      'DC_TRANSACTION_ID' => '',
     ];
 
     return $this->buildRedirectForm($form, $form_state, $payment_gateway_plugin->getRedirectUrl(), $data, 'get');
