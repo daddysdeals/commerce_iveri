@@ -19,6 +19,8 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     /** @var \Drupal\commerce_paypal\Plugin\Commerce\PaymentGateway\ExpressCheckoutInterface $payment_gateway_plugin */
     $payment_gateway_plugin = $payment->getPaymentGateway()->getPlugin();
 
+    print_r($payment_gateway_plugin);
+
     $extra = [
       'return_url' => $form['#return_url'],
       'cancel_url' => $form['#cancel_url'],
