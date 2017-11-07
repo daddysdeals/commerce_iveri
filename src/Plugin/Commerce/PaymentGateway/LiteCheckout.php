@@ -467,12 +467,7 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
    * {@inheritdoc}
    */
   public function getRedirectUrl() {
-    if ($this->getMode() == 'test') {
-      return 'https://www.sandbox.paypal.com/checkoutnow';
-    }
-    else {
-      return 'https://www.paypal.com/checkoutnow';
-    }
+    return $this->configuration['submission_endpoint'];
   }
 
   /**
