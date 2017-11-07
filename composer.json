@@ -1,0 +1,10 @@
+{
+  "name": "daddysdeals/commerce_iveri",
+  "type": "drupal-module",
+  "description": "Provides Commerce integration for iVeri.",
+  "homepage": "https://github.com/daddysdeals/commerce_iveri",
+  "license": "GPL-2.0+",
+  "require": {
+    "drupal/commerce": "~2"
+  }
+}
