@@ -19,29 +19,23 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     /** @var \Drupal\commerce_paypal\Plugin\Commerce\PaymentGateway\ExpressCheckoutInterface $payment_gateway_plugin */
     $payment_gateway_plugin = $payment->getPaymentGateway()->getPlugin();
 
-    print_r($payment_gateway_plugin);
-
     $extra = [
       'return_url' => $form['#return_url'],
       'cancel_url' => $form['#cancel_url'],
       'capture' => $form['#capture'],
     ];
-    $paypal_response = $payment_gateway_plugin->setExpressCheckout($payment, $extra);
-
-    // If we didn't get a TOKEN back from PayPal, then the
-    // $paypal_response['ACK'] == 'Failure', we need to exit checkout.
-    if (empty($paypal_response['TOKEN'])) {
-      throw new PaymentGatewayException(sprintf('[PayPal error #%s]: %s', $paypal_response['L_ERRORCODE0'], $paypal_response['L_LONGMESSAGE0']));
-    }
+    
+    print_r($extra);
 
     $order = $payment->getOrder();
-    $order->setData('paypal_express_checkout', [
-      'flow' => 'ec',
+    $order->setData('iveri_lite_checkout', [
+      'flow' => 'iveri_lite',
       'token' => $paypal_response['TOKEN'],
       'payerid' => FALSE,
       'capture' => $extra['capture'],
     ]);
     $order->save();
+
     $data = [
       'token' => $paypal_response['TOKEN'],
       'return' => $form['#return_url'],

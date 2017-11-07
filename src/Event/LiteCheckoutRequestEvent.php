@@ -13,13 +13,6 @@ use Symfony\Component\EventDispatcher\Event;
 class LiteCheckoutRequestEvent extends Event {
 
   /**
-   * The NVP API data array.
-   *
-   * @var array
-   */
-  protected $nvpData;
-
-  /**
    * The order.
    *
    * @var \Drupal\commerce_order\Entity\OrderInterface
@@ -34,8 +27,7 @@ class LiteCheckoutRequestEvent extends Event {
    * @param \Drupal\commerce_order\Entity\OrderInterface $order
    *   The order entity, or null.
    */
-  public function __construct(array $nvp_data, OrderInterface $order = NULL) {
-    $this->nvpData = $nvp_data;
+  public function __construct(OrderInterface $order = NULL) {
     $this->order = $order;
   }
 
@@ -48,28 +40,4 @@ class LiteCheckoutRequestEvent extends Event {
   public function getOrder() {
     return $this->order;
   }
-
-  /**
-   * Gets the NVP API data array.
-   *
-   * @return array
-   *   The NVP API data array.
-   */
-  public function getNvpData() {
-    return $this->nvpData;
-  }
-
-  /**
-   * Sets the NVP API data array.
-   *
-   * @param array $nvp_data
-   *   The NVP API data array as documented.
-   *
-   * @return $this
-   */
-  public function setNvpData(array $nvp_data) {
-    $this->nvpData = $nvp_data;
-    return $this;
-  }
-
 }
