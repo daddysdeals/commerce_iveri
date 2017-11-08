@@ -31,7 +31,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
 
     $data = [
       'Lite_Merchant_ApplicationID' => ($conf['transaction_mode'] == 'live') ? $conf['live_key'] : $conf['test_key'],
-      'Lite_Order_Amount' => $payment->getAmount()->getNumber(),
+      'Lite_Order_Amount' => number_format((float)$payment->getAmount()->getNumber()*100., 0, '.', ''),
       'Lite_Order_Terminal' => '',
       'Lite_Order_AuthorisationCode' => '',
       'Lite_Order_BudgetPeriod' => '',
