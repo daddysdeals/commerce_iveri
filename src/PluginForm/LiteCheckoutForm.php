@@ -89,9 +89,9 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Lite_Payment_Card_PreAuthMode' => false,
 
       // Add in the line items.
-      'Lite_Order_LineItems_Product_1'] => 'Daddy\'s Deals Product',
-      'Lite_Order_LineItems_Quantity_1'] => 1,
-      'Lite_Order_LineItems_Amount_1'] => $order_total,
+      'Lite_Order_LineItems_Product_1' => 'Daddy\'s Deals Product',
+      'Lite_Order_LineItems_Quantity_1' => 1,
+      'Lite_Order_LineItems_Amount_1' => $order_total,
     ];
 
 
