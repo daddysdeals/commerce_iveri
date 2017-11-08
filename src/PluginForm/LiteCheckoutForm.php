@@ -22,7 +22,7 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
 
     $extra = [
       'return_url' => $form['#return_url'],
-      'cancel_url' => $form['#cancel_url'],
+      'cancel_url' => 'http://localhost:8080/result.php'; //$form['#cancel_url'],
       'capture' => $form['#capture'],
     ];
     
