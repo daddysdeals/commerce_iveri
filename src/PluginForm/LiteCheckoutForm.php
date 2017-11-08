@@ -75,7 +75,8 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Ecom_BillTo_Postal_PostalCode' => '',
       'Ecom_BillTo_Postal_CountryCode' => '',
       'Ecom_BillTo_Telecom_Phone_Number' => '',
-      'Ecom_BillTo_Online_Email' => '',
+
+      'Ecom_BillTo_Online_Email' => $order->getEmail(),
       
       'Ecom_Payment_Card_Protocols' => 'iVeri',
 
