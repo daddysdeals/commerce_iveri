@@ -29,9 +29,11 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
     $order = $payment->getOrder();
     $order->save();
 
+    $order_total = number_format((float)$payment->getAmount()->getNumber()*100., 0, '.', '');
+
     $data = [
       'Lite_Merchant_ApplicationID' => ($conf['transaction_mode'] == 'live') ? $conf['live_key'] : $conf['test_key'],
-      'Lite_Order_Amount' => number_format((float)$payment->getAmount()->getNumber()*100., 0, '.', ''),
+      'Lite_Order_Amount' => $order_total,
       'Lite_Order_Terminal' => '',
       'Lite_Order_AuthorisationCode' => '',
       'Lite_Order_BudgetPeriod' => '',
@@ -85,6 +87,11 @@ class LiteCheckoutForm extends BasePaymentOffsiteForm {
       'Ecom_SchemaVersion' => '',
       'Ecom_TransactionComplete' => false,
       'Lite_Payment_Card_PreAuthMode' => false,
+
+      // Add in the line items.
+      'Lite_Order_LineItems_Product_1'] => 'Daddy\'s Deals Product',
+      'Lite_Order_LineItems_Quantity_1'] => 1,
+      'Lite_Order_LineItems_Amount_1'] => $order_total,
     ];
 
 
