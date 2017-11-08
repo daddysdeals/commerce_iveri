@@ -213,6 +213,8 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
    * {@inheritdoc}
    */
   public function onReturn(OrderInterface $order, Request $request) {
+    print_r($_POST);
+
     $order_checkout_data = $order->getData('iveri_lite_checkout');
     
     if (empty($order_checkout_data['token'])) {
