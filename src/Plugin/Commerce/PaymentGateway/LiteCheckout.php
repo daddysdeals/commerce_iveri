@@ -209,10 +209,7 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
     }
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function onReturn(OrderInterface $order, Request $request) {
+  public function _get_iveri_response($the_post) {
     drupal_set_message('<pre>'. print_r($_POST, true) .'</pre>');
 
     switch ($_POST['LITE_PAYMENT_CARD_STATUS']) {
@@ -227,6 +224,17 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
       default:
         drupal_set_message('Transaction failed with reason: <b>'. $_POST['LITE_RESULT_DESCRIPTION'] .'. Please try again with another card.');
     }
+  }
+
+  public function onCancel(OrderInterface $order, Request $request) {
+    _get_iveri_response($_POST);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onReturn(OrderInterface $order, Request $request) {
+    _get_iveri_response($_POST);
 
     /*$order_checkout_data = $order->getData('iveri_lite_checkout');
     
