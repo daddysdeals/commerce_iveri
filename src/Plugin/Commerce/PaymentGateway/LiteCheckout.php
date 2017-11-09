@@ -210,8 +210,6 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
   }
 
   public function _get_iveri_response($the_post) {
-    drupal_set_message('<pre>'. print_r($_POST, true) .'</pre>');
-
     switch ($_POST['LITE_PAYMENT_CARD_STATUS']) {
       case "0":
         drupal_set_message('Success');
@@ -222,7 +220,7 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
       break;
 
       default:
-        drupal_set_message('Transaction failed with reason: <b>'. $_POST['LITE_RESULT_DESCRIPTION'] .'. Please try again with another card.');
+        drupal_set_message('Transaction failed with reason: "'. $_POST['LITE_RESULT_DESCRIPTION'] .'". Please try again with another card.');
     }
   }
 
