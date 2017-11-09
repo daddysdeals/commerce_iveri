@@ -213,9 +213,22 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
    * {@inheritdoc}
    */
   public function onReturn(OrderInterface $order, Request $request) {
-    print_r($_POST);
+    drupal_set_message('<pre>'. print_r($_POST, true) .'</pre>');
 
-    $order_checkout_data = $order->getData('iveri_lite_checkout');
+    switch ($_POST['LITE_PAYMENT_CARD_STATUS']) {
+      case "0":
+        drupal_set_message('Success');
+      break;
+
+      case "9":
+        drupal_set_message('Transaction failed due to technical problems, please try again later');
+      break;
+
+      default:
+        drupal_set_message('Transaction failed with reason: <b>'. $_POST['LITE_RESULT_DESCRIPTION'] .'. Please try again with another card.');
+    }
+
+    /*$order_checkout_data = $order->getData('iveri_lite_checkout');
     
     if (empty($order_checkout_data['token'])) {
       throw new PaymentGatewayException('Token data missing for this PayPal Express Checkout transaction.');
@@ -291,6 +304,7 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
     }
 
     $payment->save();
+    */
   }
 
   /**
