@@ -275,6 +275,66 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
   /**
    * {@inheritdoc}
    */
+  public function capturePayment(PaymentInterface $payment, Price $amount = NULL) {
+    $this->assertPaymentState($payment, ['authorization']);
+    // If not specified, capture the entire amount.
+    $amount = $amount ?: $payment->getAmount();
+    $amount = $this->rounder->round($amount);
+
+    $payment->setState('completed');
+    $payment->setAmount($amount);
+
+    // Update the remote id for the captured transaction.
+    $payment->setRemoteId('');
+    $payment->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function voidPayment(PaymentInterface $payment) {
+    $this->assertPaymentState($payment, ['authorization']);
+
+    $payment->setState('authorization_voided');
+    $payment->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refundPayment(PaymentInterface $payment, Price $amount = NULL) {
+    $this->assertPaymentState($payment, ['completed', 'partially_refunded']);
+
+    // If not specified, refund the entire amount.
+    $amount = $amount ?: $payment->getAmount();
+    $this->assertRefundAmount($payment, $amount);
+    $amount = $this->rounder->round($amount);
+
+    $extra['amount'] = $amount->getNumber();
+    // Check if the Refund is partial or full.
+    $old_refunded_amount = $payment->getRefundedAmount();
+    $new_refunded_amount = $old_refunded_amount->add($amount);
+    if ($new_refunded_amount->lessThan($payment->getAmount())) {
+      $payment->setState('partially_refunded');
+      $extra['refund_type'] = 'Partial';
+    }
+    else {
+      $payment->setState('refunded');
+      if ($amount->lessThan($payment->getAmount())) {
+        $extra['refund_type'] = 'Partial';
+      }
+      else {
+        $extra['refund_type'] = 'Full';
+      }
+    }
+
+    $payment->setRefundedAmount($new_refunded_amount);
+    $payment->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function onNotify(Request $request) {
     
   }
