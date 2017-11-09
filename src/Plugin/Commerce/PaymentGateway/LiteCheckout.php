@@ -212,66 +212,36 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
   public function _get_iveri_response($the_post) {
     switch ($_POST['LITE_PAYMENT_CARD_STATUS']) {
       case "0":
-        drupal_set_message('Success');
+        $message = 'Success';
       break;
 
       case "9":
-        drupal_set_message('Transaction failed due to technical problems, please try again later', 'error');
+        $message = 'Transaction failed due to technical problems, please try again later';
       break;
 
       default:
-        drupal_set_message('Transaction failed with reason: "'. $_POST['LITE_RESULT_DESCRIPTION'] .'". Please try again with another card.', 'warning');
+      $message = 'Transaction failed with reason: "'. $_POST['LITE_RESULT_DESCRIPTION'] .'". Please try again.';
     }
+
+    return $message;
   }
 
   public function onCancel(OrderInterface $order, Request $request) {
-    drupal_set_message('cancel', 'warning');
-
-    $this->_get_iveri_response($_POST);
+    $response = $this->_get_iveri_response($_POST);
+    drupal_set_message($response, 'warning');
   }
 
   /**
    * {@inheritdoc}
    */
   public function onReturn(OrderInterface $order, Request $request) {
-    drupal_set_message('return', 'success');
+    $response = $this->_get_iveri_response($_POST);
 
-    $this->_get_iveri_response($_POST);
+    drupal_set_message(print_r($_POST, true));
 
-    /*$order_checkout_data = $order->getData('iveri_lite_checkout');
-    
-    if (empty($order_checkout_data['token'])) {
-      throw new PaymentGatewayException('Token data missing for this PayPal Express Checkout transaction.');
-    }
-
-    // GetExpressCheckoutDetails API Operation (NVP).
-    // Shows information about an Express Checkout transaction.
-    $paypal_response = $this->getExpressCheckoutDetails($order);
-
-    // If the request failed, exit now with a failure message.
-    if ($paypal_response['ACK'] == 'Failure') {
-      throw new PaymentGatewayException($paypal_response['PAYMENTREQUESTINFO_0_LONGMESSAGE'], $paypal_response['PAYMENTREQUESTINFO_n_ERRORCODE']);
-    }
-
-    // Set the Payer ID used to finalize payment.
-    $order_express_checkout_data['payerid'] = $paypal_response['PAYERID'];
-    $order->setData('paypal_express_checkout', $order_express_checkout_data);
-
-    // If the user is anonymous, add their PayPal e-mail to the order.
-    if (empty($order->mail)) {
-      $order->setEmail($paypal_response['EMAIL']);
-    }
+    $order_checkout_data = $order->getData('iveri_lite_checkout');
+    $order->setData('iveri_lite_checkout', $order_express_checkout_data);
     $order->save();
-
-    // DoExpressCheckoutPayment API Operation (NVP).
-    // Completes an Express Checkout transaction.
-    $paypal_response = $this->doExpressCheckoutDetails($order);
-
-    // Nothing to do for failures for now - no payment saved.
-    // @todo - more about the failures.
-    if ($paypal_response['PAYMENTINFO_0_PAYMENTSTATUS'] == 'Failed') {
-      throw new PaymentGatewayException($paypal_response['PAYMENTINFO_0_LONGMESSAGE'], $paypal_response['PAYMENTINFO_0_ERRORCODE']);
-    }
 
     $payment_storage = $this->entityTypeManager->getStorage('commerce_payment');
     $payment = $payment_storage->create([
@@ -279,125 +249,26 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
       'amount' => $order->getTotalPrice(),
       'payment_gateway' => $this->entityId,
       'order_id' => $order->id(),
-      'remote_id' => $paypal_response['PAYMENTINFO_0_TRANSACTIONID'],
-      'remote_state' => $paypal_response['PAYMENTINFO_0_PAYMENTSTATUS'],
+      'remote_id' => '',
+      'remote_state' => '',
     ]);
 
     // Process payment status received.
     // @todo payment updates if needed.
     // If we didn't get an approval response code...
-    switch ($paypal_response['PAYMENTINFO_0_PAYMENTSTATUS']) {
-      case 'Voided':
-        $payment->state = 'authorization_voided';
-        break;
-
-      case 'Pending':
-        $payment->state = 'authorization';
-        break;
-
-      case 'Completed':
-      case 'Processed':
+    switch ($_POST['LITE_PAYMENT_CARD_STATUS']) {
+      case 0:
         $payment->state = 'completed';
-        break;
+      break;
 
-      case 'Refunded':
-        $payment->state = 'refunded';
-        break;
-
-      case 'Partially-Refunded':
-        $payment->state = 'partially_refunded';
-        break;
-
-      case 'Expired':
+      case 9:
         $payment->state = 'authorization_expired';
-        break;
+      break;
+
+      default:
+        $payment->state = 'authorization';
     }
 
-    $payment->save();
-    */
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function capturePayment(PaymentInterface $payment, Price $amount = NULL) {
-    $this->assertPaymentState($payment, ['authorization']);
-    // If not specified, capture the entire amount.
-    $amount = $amount ?: $payment->getAmount();
-    $amount = $this->rounder->round($amount);
-
-    // GetExpressCheckoutDetails API Operation (NVP).
-    // Shows information about an Express Checkout transaction.
-    $paypal_response = $this->doCapture($payment, $amount->getNumber());
-
-    if ($paypal_response['ACK'] == 'Failure') {
-      $message = $paypal_response['L_LONGMESSAGE0'];
-      throw new PaymentGatewayException($message, $paypal_response['L_ERRORCODE0']);
-    }
-
-    $payment->setState('completed');
-    $payment->setAmount($amount);
-    // Update the remote id for the captured transaction.
-    $payment->setRemoteId($paypal_response['TRANSACTIONID']);
-    $payment->save();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function voidPayment(PaymentInterface $payment) {
-    $this->assertPaymentState($payment, ['authorization']);
-
-    // GetExpressCheckoutDetails API Operation (NVP).
-    // Shows information about an Express Checkout transaction.
-    $paypal_response = $this->doVoid($payment);
-    if ($paypal_response['ACK'] == 'Failure') {
-      $message = $paypal_response['L_LONGMESSAGE0'];
-      throw new PaymentGatewayException($message, $paypal_response['L_ERRORCODE0']);
-    }
-
-    $payment->setState('authorization_voided');
-    $payment->save();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function refundPayment(PaymentInterface $payment, Price $amount = NULL) {
-    $this->assertPaymentState($payment, ['completed', 'partially_refunded']);
-    // If not specified, refund the entire amount.
-    $amount = $amount ?: $payment->getAmount();
-    $this->assertRefundAmount($payment, $amount);
-    $amount = $this->rounder->round($amount);
-
-    $extra['amount'] = $amount->getNumber();
-    // Check if the Refund is partial or full.
-    $old_refunded_amount = $payment->getRefundedAmount();
-    $new_refunded_amount = $old_refunded_amount->add($amount);
-    if ($new_refunded_amount->lessThan($payment->getAmount())) {
-      $payment->setState('partially_refunded');
-      $extra['refund_type'] = 'Partial';
-    }
-    else {
-      $payment->setState('refunded');
-      if ($amount->lessThan($payment->getAmount())) {
-        $extra['refund_type'] = 'Partial';
-      }
-      else {
-        $extra['refund_type'] = 'Full';
-      }
-    }
-
-    // RefundTransaction API Operation (NVP).
-    // Refund (full or partial) an Express Checkout transaction.
-    $paypal_response = $this->doRefundTransaction($payment, $extra);
-
-    if ($paypal_response['ACK'] == 'Failure') {
-      $message = $paypal_response['L_LONGMESSAGE0'];
-      throw new PaymentGatewayException($message, $paypal_response['L_ERRORCODE0']);
-    }
-
-    $payment->setRefundedAmount($new_refunded_amount);
     $payment->save();
   }
 
@@ -405,88 +276,7 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
    * {@inheritdoc}
    */
   public function onNotify(Request $request) {
-    // Get IPN request data and basic processing for the IPN request.
-    $ipn_data = $this->ipnHandler->process($request);
-
-    // Do not perform any processing on EC transactions here that do not have
-    // transaction IDs, indicating they are non-payment IPNs such as those used
-    // for subscription signup requests.
-    if (empty($ipn_data['txn_id'])) {
-      $this->logger->alert('The IPN request does not have a transaction id. Ignored.');
-      return FALSE;
-    }
-    // Exit when we don't get a payment status we recognize.
-    if (!in_array($ipn_data['payment_status'], ['Failed', 'Voided', 'Pending', 'Completed', 'Refunded'])) {
-      throw new BadRequestHttpException('Invalid payment status');
-    }
-    // If this is a prior authorization capture IPN...
-    if (in_array($ipn_data['payment_status'], ['Voided', 'Pending', 'Completed']) && !empty($ipn_data['auth_id'])) {
-      // Ensure we can load the existing corresponding transaction.
-      $payment = $this->loadPaymentByRemoteId($ipn_data['auth_id']);
-      // If not, bail now because authorization transactions should be created
-      // by the Express Checkout API request itself.
-      if (!$payment) {
-        $this->logger->warning('IPN for Order @order_number ignored: authorization transaction already created.', ['@order_number' => $ipn_data['invoice']]);
-        return FALSE;
-      }
-      $amount = new Price($ipn_data['mc_gross'], $ipn_data['mc_currency']);
-      $payment->setAmount($amount);
-      // Update the payment state.
-      switch ($ipn_data['payment_status']) {
-        case 'Voided':
-          $payment->state = 'authorization_voided';
-          break;
-
-        case 'Pending':
-          $payment->state = 'authorization';
-          break;
-
-        case 'Completed':
-          $payment->state = 'completed';
-          break;
-      }
-      // Update the remote id.
-      $payment->remote_id = $ipn_data['txn_id'];
-    }
-    elseif ($ipn_data['payment_status'] == 'Refunded') {
-      // Get the corresponding parent transaction and refund it.
-      $payment = $this->loadPaymentByRemoteId($ipn_data['parent_txn_id']);
-      if (!$payment) {
-        $this->logger->warning('IPN for Order @order_number ignored: the transaction to be refunded does not exist.', ['@order_number' => $ipn_data['invoice']]);
-        return FALSE;
-      }
-      elseif ($payment->getState() == 'refunded') {
-        $this->logger->warning('IPN for Order @order_number ignored: the transaction is already refunded.', ['@order_number' => $ipn_data['invoice']]);
-        return FALSE;
-      }
-      $amount = new Price((string) $ipn_data['mc_gross'], $ipn_data['mc_currency']);
-      // Check if the Refund is partial or full.
-      $old_refunded_amount = $payment->getRefundedAmount();
-      $new_refunded_amount = $old_refunded_amount->add($amount);
-      if ($new_refunded_amount->lessThan($payment->getAmount())) {
-        $payment->setState('partially_refunded');
-      }
-      else {
-        $payment->setState('refunded');
-      }
-      $payment->setRefundedAmount($new_refunded_amount);
-    }
-    elseif ($ipn_data['payment_status'] == 'Failed') {
-      // ToDo - to check and report existing payments???
-    }
-    else {
-      // In other circumstances, exit the processing, because we handle those
-      // cases directly during API response processing.
-      $this->logger->notice('IPN for Order @order_number ignored: this operation was accommodated in the direct API response.', ['@order_number' => $ipn_data['invoice']]);
-      return FALSE;
-    }
-    if (isset($payment)) {
-      $payment->currency_code = $ipn_data['mc_currency'];
-      // Set the transaction's statuses based on the IPN's payment_status.
-      $payment->setRemoteState($ipn_data['payment_status']);
-      // Save the transaction information.
-      $payment->save();
-    }
+    
   }
 
   /**
