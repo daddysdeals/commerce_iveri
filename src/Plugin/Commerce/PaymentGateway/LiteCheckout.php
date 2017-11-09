@@ -227,14 +227,14 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
   }
 
   public function onCancel(OrderInterface $order, Request $request) {
-    _get_iveri_response($_POST);
+    $this->_get_iveri_response($_POST);
   }
 
   /**
    * {@inheritdoc}
    */
   public function onReturn(OrderInterface $order, Request $request) {
-    _get_iveri_response($_POST);
+    $this->_get_iveri_response($_POST);
 
     /*$order_checkout_data = $order->getData('iveri_lite_checkout');
     
