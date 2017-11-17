@@ -237,8 +237,6 @@ class LiteCheckout extends OffsitePaymentGatewayBase implements LiteCheckoutInte
   public function onReturn(OrderInterface $order, Request $request) {
     $response = $this->_get_iveri_response($_POST);
 
-    drupal_set_message(print_r($_POST, true));
-
     $order_checkout_data = $order->getData('iveri_lite_checkout');
     $order->setData('iveri_lite_checkout', $order_express_checkout_data);
     $order->save();
